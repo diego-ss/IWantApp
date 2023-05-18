@@ -1,13 +1,14 @@
 using IWantApp.Endpoints.Categories;
+using IWantApp.Infra.Database;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSqlServer<ApplicationDbContext>(builder.Configuration.GetConnectionString("SqlServer"));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -17,6 +18,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapMethods(CategoryPost.Template, CategoryPost.Methods, CategoryPost.Handler);
+app.MapMethods(CategoryGetAll.Template, CategoryGetAll.Methods, CategoryGetAll.Handler);
+app.MapMethods(CategoryPut.Template, CategoryPut.Methods, CategoryPut.Handler);
 
 app.Run();
 
