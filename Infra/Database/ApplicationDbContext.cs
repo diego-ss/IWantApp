@@ -18,8 +18,12 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        base.OnModelCreating(builder);
+
+        // ignorando propriedades das notifications
         builder.Ignore<Notification>();
 
+        // impondo regras de propriedades
         builder.Entity<Product>().Property(p => p.Description).HasMaxLength(255);
         builder.Entity<Product>().Property(p => p.Name).IsRequired();
 
