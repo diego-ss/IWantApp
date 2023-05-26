@@ -1,4 +1,5 @@
 using IWantApp.Endpoints.Categories;
+using IWantApp.Endpoints.Employees;
 using IWantApp.Infra.Database;
 using Microsoft.AspNetCore.Identity;
 
@@ -25,6 +26,7 @@ app.UseHttpsRedirection();
 app.MapMethods(CategoryPost.Template, CategoryPost.Methods, CategoryPost.Handler);
 app.MapMethods(CategoryGetAll.Template, CategoryGetAll.Methods, CategoryGetAll.Handler);
 app.MapMethods(CategoryPut.Template, CategoryPut.Methods, CategoryPut.Handler);
+app.MapMethods(EmployeePost.Template, EmployeePost.Methods, EmployeePost.Handler);
 
 app.Run();
 
