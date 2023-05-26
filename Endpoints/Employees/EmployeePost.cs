@@ -1,5 +1,6 @@
 ﻿using IWantApp.Infra.Database;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace IWantApp.Endpoints.Employees;
 
@@ -17,9 +18,18 @@ public class EmployeePost
         employee.UserName = employeeRequest.Name;
         var result = userManager.CreateAsync(employee, employeeRequest.Password).Result;
 
-        if (result.Succeeded)
-            return Results.Created($"/employees/{employee.Id}", employee.Id);
-        else
+        if (!result.Succeeded)
             return Results.BadRequest(result.Errors);
+
+        var claimResult = userManager.AddClaimsAsync(employee,
+            new Claim[] {
+                new Claim("EmployeeCode", employeeRequest.EmployeeCode),
+                new Claim("Name", employeeRequest.Name)
+            }).Result;
+
+        if (!claimResult.Succeeded)
+            return Results.BadRequest(claimResult.Errors);
+
+        return Results.Created($"/employees/{employee.Id}", employee.Id);
     }
 }
