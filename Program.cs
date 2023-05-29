@@ -27,6 +27,7 @@ app.MapMethods(CategoryPost.Template, CategoryPost.Methods, CategoryPost.Handler
 app.MapMethods(CategoryGetAll.Template, CategoryGetAll.Methods, CategoryGetAll.Handler);
 app.MapMethods(CategoryPut.Template, CategoryPut.Methods, CategoryPut.Handler);
 app.MapMethods(EmployeePost.Template, EmployeePost.Methods, EmployeePost.Handler);
+app.MapMethods(EmployeeGetAll.Template, EmployeeGetAll.Methods, EmployeeGetAll.Handler);
 
 app.Run();
 
