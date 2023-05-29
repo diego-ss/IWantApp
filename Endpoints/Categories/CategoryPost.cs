@@ -1,7 +1,6 @@
 ﻿using IWantApp.Domain.Products;
 using IWantApp.Endpoints.Extensions;
 using IWantApp.Infra.Database;
-using System.Xml.Linq;
 
 namespace IWantApp.Endpoints.Categories;
 
