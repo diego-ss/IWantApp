@@ -1,8 +1,4 @@
-﻿using Dapper;
-using IWantApp.Infra.Database;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Data.SqlClient;
-
+﻿using IWantApp.Infra.Database;
 namespace IWantApp.Endpoints.Employees;
 
 public class EmployeeGetAll
