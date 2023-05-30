@@ -9,6 +9,8 @@ builder.Services.AddSqlServer<ApplicationDbContext>(builder.Configuration.GetCon
 // serviço do identity
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+// serviço da query do dapper
+builder.Services.AddScoped<QueryAllUsersWithClaimName>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
