@@ -1,4 +1,6 @@
 ﻿using IWantApp.Infra.Database;
+using Microsoft.AspNetCore.Authorization;
+
 namespace IWantApp.Endpoints.Employees;
 
 public class EmployeeGetAll
@@ -7,6 +9,7 @@ public class EmployeeGetAll
     public static string[] Methods => new string[] { HttpMethod.Get.ToString() };
     public static Delegate Handler => Action;
 
+    [Authorize(Policy = "EmployeeBlockPolicy")]
     public static IResult Action(int? page, int? rows, QueryAllUsersWithClaimName queryAllUsersWithClaimName)
     {
         if (page == null)

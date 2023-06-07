@@ -3,6 +3,7 @@ using IWantApp.Endpoints.Employees;
 using IWantApp.Endpoints.Security;
 using IWantApp.Infra.Database;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -14,7 +15,20 @@ builder.Services.AddSqlServer<ApplicationDbContext>(builder.Configuration.GetCon
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 // serviço de autorização
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    // com essa police, todas as rotas são protegidas
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+      .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+      .RequireAuthenticatedUser()
+      .Build();
+
+    options.AddPolicy("EmployeePolicy", p => 
+        p.RequireAuthenticatedUser().RequireClaim("EmployeeCode"));
+
+    options.AddPolicy("EmployeeBlockPolicy", p =>
+        p.RequireAuthenticatedUser().RequireClaim("EmployeeCode", "01533"));
+});
 // serviço de autenticação
 builder.Services.AddAuthentication(x =>
 {
@@ -26,8 +40,10 @@ builder.Services.AddAuthentication(x =>
     {
         ValidateActor = true,
         ValidateAudience = true,
+        ValidateIssuer = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
+        ClockSkew = TimeSpan.Zero, // tolerância da expiração do token
         ValidIssuer = builder.Configuration["JwtBearerTokenSettings:Issuer"],
         ValidAudience = builder.Configuration["JwtBearerTokenSettings:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtBearerTokenSettings:SecretKey"]))
@@ -40,8 +56,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
 
 if (app.Environment.IsDevelopment())
 {
