@@ -13,10 +13,10 @@ public class QueryAllUsersWithClaimName
         this.configuration = configuration;
     }
 
-    public IEnumerable<EmployeeResponse> Execute(int page, int rows)
+    public async Task<IEnumerable<EmployeeResponse>> Execute(int page, int rows)
     {
         var db = new SqlConnection(configuration.GetConnectionString("SqlServer"));
-        var employees = db.Query<EmployeeResponse>(
+        var employees = await db.QueryAsync<EmployeeResponse>(
             @"SELECT EMAIL, CLAIMVALUE AS NAME 
             FROM AspNetUsers A 
             INNER JOIN AspNetUserClaims B

@@ -10,7 +10,7 @@ public class EmployeeGetAll
     public static Delegate Handler => Action;
 
     [Authorize(Policy = "EmployeeBlockPolicy")]
-    public static IResult Action(int? page, int? rows, QueryAllUsersWithClaimName queryAllUsersWithClaimName)
+    public static async Task<IResult> Action(int? page, int? rows, QueryAllUsersWithClaimName queryAllUsersWithClaimName)
     {
         if (page == null)
             return Results.BadRequest("Page is required");
@@ -19,6 +19,6 @@ public class EmployeeGetAll
             return Results.BadRequest("Rows is required");
 
 
-        return Results.Ok(queryAllUsersWithClaimName.Execute(page.Value, rows.Value));
+        return Results.Ok(await queryAllUsersWithClaimName.Execute(page.Value, rows.Value));
     }
 }

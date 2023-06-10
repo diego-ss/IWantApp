@@ -11,7 +11,7 @@ public class CategoryPost
     public static string[] Methods => new string[] { HttpMethod.Post.ToString() };
     public static Delegate Handler => Action;
 
-    public static IResult Action(CategoryRequest categoryRequest, HttpContext httpContext, ApplicationDbContext context)
+    public static async Task<IResult> Action(CategoryRequest categoryRequest, HttpContext httpContext, ApplicationDbContext context)
     {
         var userId = httpContext.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
 
@@ -20,8 +20,8 @@ public class CategoryPost
         if (!category.IsValid)
             return Results.ValidationProblem(category.Notifications.ConvertToProblemDetails());
 
-        context.Categories.Add(category);
-        context.SaveChanges();
+        await context.Categories.AddAsync(category);
+        await context.SaveChangesAsync();
 
         return Results.Created($"/categories/{category.Id}", category.Id);
     }
