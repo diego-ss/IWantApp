@@ -14,11 +14,15 @@ public class TokenPost
     public static Delegate Handler => Action;
 
     [AllowAnonymous]
-    public static IResult Action(LoginRequest loginRequest, IConfiguration configuration, UserManager<IdentityUser> userManager)
+    public static IResult Action(LoginRequest loginRequest, IConfiguration configuration, UserManager<IdentityUser> userManager, ILogger<TokenPost> logger)
     {
+        logger.LogInformation("Finding user...");
         var user = userManager.FindByEmailAsync(loginRequest.Email).Result;
         if (user == null || !userManager.CheckPasswordAsync(user, loginRequest.Password).Result)
+        {
+            logger.LogError($"User with email {loginRequest.Email} not registered");
             return Results.BadRequest();
+        }
 
         var claims = userManager.GetClaimsAsync(user).Result;
         var subject = new ClaimsIdentity(new Claim[]
@@ -28,6 +32,7 @@ public class TokenPost
             });
         subject.AddClaims(claims);
 
+        logger.LogInformation("Getting token...");
         var key = Encoding.ASCII.GetBytes(configuration["JwtBearerTokenSettings:SecretKey"]);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
@@ -40,6 +45,8 @@ public class TokenPost
 
         var tokenHandler = new JwtSecurityTokenHandler();
         var token = tokenHandler.CreateToken(tokenDescriptor);
+        logger.LogInformation("Token generated successfully...");
+
         return Results.Ok(new
         {
             token = tokenHandler.WriteToken(token)
