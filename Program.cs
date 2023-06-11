@@ -1,5 +1,6 @@
 using IWantApp.Endpoints.Categories;
 using IWantApp.Endpoints.Employees;
+using IWantApp.Endpoints.Products;
 using IWantApp.Endpoints.Security;
 using IWantApp.Infra.Database;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
 using System.Text;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 // configurando serilog para salvar logs no banco de dados
@@ -85,6 +87,9 @@ app.UseHttpsRedirection();
 app.MapMethods(CategoryPost.Template, CategoryPost.Methods, CategoryPost.Handler);
 app.MapMethods(CategoryGetAll.Template, CategoryGetAll.Methods, CategoryGetAll.Handler);
 app.MapMethods(CategoryPut.Template, CategoryPut.Methods, CategoryPut.Handler);
+app.MapMethods(ProductPost.Template, ProductPost.Methods, ProductPost.Handler);
+app.MapMethods(ProductGetAll.Template, ProductGetAll.Methods, ProductGetAll.Handler);
+app.MapMethods(ProductGetById.Template, ProductGetById.Methods, ProductGetById.Handler);
 app.MapMethods(EmployeePost.Template, EmployeePost.Methods, EmployeePost.Handler);
 app.MapMethods(EmployeeGetAll.Template, EmployeeGetAll.Methods, EmployeeGetAll.Handler);
 app.MapMethods(TokenPost.Template, TokenPost.Methods, TokenPost.Handler);
@@ -96,9 +101,10 @@ app.Map("error", (HttpContext httpContext) =>
     // capturando o erro que ocorreu
     var error = httpContext.Features?.Get<IExceptionHandlerFeature>()?.Error;
     if (error != null)
-        if(error is SqlException)
+        if (error is SqlException)
             return Results.Problem(title: "Database not online", statusCode: 500);
-    
+        else if (error is BadHttpRequestException)
+            return Results.Problem(title: "Error to convert data. Check the sent informations.", statusCode: 500);
 
     return Results.Problem(title: "An error ocurred", statusCode: 500);
 });

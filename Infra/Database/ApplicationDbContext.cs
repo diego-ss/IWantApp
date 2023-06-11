@@ -22,6 +22,7 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
         // impondo regras de propriedades
         builder.Entity<Product>().Property(p => p.Description).HasMaxLength(255);
         builder.Entity<Product>().Property(p => p.Name).IsRequired();
+        builder.Entity<Product>().Property(p => p.Price).HasColumnType("decimal(10,2)").IsRequired();
 
         builder.Entity<Category>().Property(c => c.Name).IsRequired();
     }
