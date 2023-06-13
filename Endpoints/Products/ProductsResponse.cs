@@ -1,3 +1,3 @@
 ﻿namespace IWantApp.Endpoints.Products;
 
-public record ProductsResponse(string Name, string CategoryName, string Description, bool HasStock, bool Active);
+public record ProductsResponse(string Name, string CategoryName, string Description, double Price, bool HasStock, bool Active);

@@ -18,7 +18,7 @@ public class ProductGetById
         if (product == null)
             return Results.NotFound("Failed to find product with given id");
 
-        var result = new ProductsResponse(product.Name, product.Category.Name, product.Description, product.HasStock, product.Active);
+        var result = new ProductsResponse(product.Name, product.Category.Name, product.Description, product.Price, product.HasStock, product.Active);
         return Results.Ok(result);
     }
 }
