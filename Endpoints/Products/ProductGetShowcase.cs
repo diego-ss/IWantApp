@@ -15,7 +15,9 @@ public class ProductGetShowcase
         if (rows > 10)
             return Results.Problem(title: "Invalid number of rows", detail: "The max rows number is 10", statusCode: 400);
 
-        var queryBase = context.Products.Include(p => p.Category)
+        var queryBase = context.Products
+            .AsNoTracking()
+            .Include(p => p.Category)
             .Where(p => p.HasStock && p.Category.Active);
 
         if (orderBy == "name")
