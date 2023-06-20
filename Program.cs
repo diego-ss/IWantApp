@@ -1,4 +1,5 @@
 using IWantApp.Endpoints.Categories;
+using IWantApp.Endpoints.Clients;
 using IWantApp.Endpoints.Employees;
 using IWantApp.Endpoints.Products;
 using IWantApp.Endpoints.Security;
@@ -94,6 +95,7 @@ app.MapMethods(ProductGetById.Template, ProductGetById.Methods, ProductGetById.H
 app.MapMethods(EmployeePost.Template, EmployeePost.Methods, EmployeePost.Handler);
 app.MapMethods(EmployeeGetAll.Template, EmployeeGetAll.Methods, EmployeeGetAll.Handler);
 app.MapMethods(TokenPost.Template, TokenPost.Methods, TokenPost.Handler);
+app.MapMethods(ClientPost.Template, ClientPost.Methods, ClientPost.Handler);
 
 // capturando exceções para a rota de erro
 app.UseExceptionHandler("/error");
