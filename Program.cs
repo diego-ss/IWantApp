@@ -1,3 +1,4 @@
+using IWantApp.Domain.Users;
 using IWantApp.Endpoints.Categories;
 using IWantApp.Endpoints.Clients;
 using IWantApp.Endpoints.Employees;
@@ -27,6 +28,7 @@ builder.Host.UseSerilog((context, configuration) => {
             TableName = "LogAPI"
         });
 });
+
 // serviço de banco de dados
 builder.Services.AddSqlServer<ApplicationDbContext>(builder.Configuration.GetConnectionString("SqlServer"));
 // serviço do identity
@@ -69,6 +71,7 @@ builder.Services.AddAuthentication(x =>
 });
 // serviço da query do dapper
 builder.Services.AddScoped<QueryAllUsersWithClaimName>();
+builder.Services.AddScoped<UserService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -96,6 +99,7 @@ app.MapMethods(EmployeePost.Template, EmployeePost.Methods, EmployeePost.Handler
 app.MapMethods(EmployeeGetAll.Template, EmployeeGetAll.Methods, EmployeeGetAll.Handler);
 app.MapMethods(TokenPost.Template, TokenPost.Methods, TokenPost.Handler);
 app.MapMethods(ClientPost.Template, ClientPost.Methods, ClientPost.Handler);
+app.MapMethods(ClientGet.Template, ClientGet.Methods, ClientGet.Handler);
 
 // capturando exceções para a rota de erro
 app.UseExceptionHandler("/error");

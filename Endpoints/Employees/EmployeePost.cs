@@ -1,4 +1,6 @@
-﻿using IWantApp.Endpoints.Extensions;
+﻿using IWantApp.Domain.Users;
+using IWantApp.Endpoints.Clients;
+using IWantApp.Endpoints.Extensions;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
@@ -10,29 +12,21 @@ public class EmployeePost
     public static string[] Methods => new string[] { HttpMethod.Post.ToString() };
     public static Delegate Handler => Action;
 
-    public static async Task<IResult> Action(EmployeeRequest employeeRequest, HttpContext httpContext, UserManager<IdentityUser> userManager)
+    public static async Task<IResult> Action(EmployeeRequest employeeRequest, HttpContext httpContext, UserService userService)
     {
-        // criando novo usuário
-        var employee = new IdentityUser();
-        employee.Email = employeeRequest.Email;
-        employee.UserName = employeeRequest.Name;
-        var result = await userManager.CreateAsync(employee, employeeRequest.Password);
         var userId = httpContext.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
 
-
-        if (!result.Succeeded)
-            return Results.ValidationProblem(result.Errors.ConvertToProblemDetails());
-
-        var claimResult = await userManager.AddClaimsAsync(employee,
-            new Claim[] {
+        var claims = new List <Claim> {
                 new Claim("EmployeeCode", employeeRequest.EmployeeCode),
                 new Claim("Name", employeeRequest.Name),
                 new Claim("CreateBy", userId)
-            });
+            };
 
-        if (!claimResult.Succeeded)
-            return Results.BadRequest(claimResult.Errors);
+        (IdentityResult identity, string userId) result = await userService.Create(employeeRequest.Name, employeeRequest.Email, employeeRequest.Password, claims);
 
-        return Results.Created($"/employees/{employee.Id}", employee.Id);
+        if (!result.identity.Succeeded)
+            return Results.ValidationProblem(result.identity.Errors.ConvertToProblemDetails());
+
+        return Results.Created($"/employees/{result.userId}", result.userId);
     }
 }

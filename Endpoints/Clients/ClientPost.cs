@@ -1,4 +1,5 @@
-﻿using IWantApp.Endpoints.Extensions;
+﻿using IWantApp.Domain.Users;
+using IWantApp.Endpoints.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
@@ -11,24 +12,17 @@ public class ClientPost
     public static Delegate Handler => Action;
 
     [AllowAnonymous]
-    public static async Task<IResult> Action(ClientRequest clientRequest, HttpContext httpContext, UserManager<IdentityUser> userManager)
+    public static async Task<IResult> Action(ClientRequest clientRequest, UserService userService)
     {
-        // criando novo usuário
-        var client = new IdentityUser { UserName = clientRequest.Name, Email = clientRequest.Email };
-        var result = await userManager.CreateAsync(client, clientRequest.Password);
-
-        if (!result.Succeeded)
-            return Results.ValidationProblem(result.Errors.ConvertToProblemDetails());
-
-        var claimResult = await userManager.AddClaimsAsync(client,
-            new Claim[] {
+        var claims = new List<Claim> {
                 new Claim("Cpf", clientRequest.Cpf),
-                new Claim("Name", clientRequest.Name),
-            });
+                new Claim("Name", clientRequest.Name) };
 
-        if (!claimResult.Succeeded)
-            return Results.BadRequest(claimResult.Errors);
+        (IdentityResult identity, string userId) result = await userService.Create(clientRequest.Name, clientRequest.Email, clientRequest.Password, claims);
 
-        return Results.Created($"/clients/{client.Id}", client.Id);
+        if (!result.identity.Succeeded)
+            return Results.ValidationProblem(result.identity.Errors.ConvertToProblemDetails());
+
+        return Results.Created($"/clients/{result.userId}", result.userId);
     }
 }
