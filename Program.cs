@@ -14,7 +14,6 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
 using System.Text;
-using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 // configurando serilog para salvar logs no banco de dados
@@ -47,8 +46,8 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("EmployeePolicy", p => 
         p.RequireAuthenticatedUser().RequireClaim("EmployeeCode"));
 
-    options.AddPolicy("EmployeeBlockPolicy", p =>
-        p.RequireAuthenticatedUser().RequireClaim("EmployeeCode", "01533"));
+    options.AddPolicy("CpfBlockPolicy", p =>
+        p.RequireAuthenticatedUser().RequireClaim("Cpf"));
 });
 // serviço de autenticação
 builder.Services.AddAuthentication(x =>

@@ -9,7 +9,7 @@ public class EmployeeGetAll
     public static string[] Methods => new string[] { HttpMethod.Get.ToString() };
     public static Delegate Handler => Action;
 
-    [Authorize(Policy = "EmployeeBlockPolicy")]
+    [Authorize(Policy = "EmployeePolicy")]
     public static async Task<IResult> Action(int? page, int? rows, QueryAllUsersWithClaimName queryAllUsersWithClaimName)
     {
         if (page == null)

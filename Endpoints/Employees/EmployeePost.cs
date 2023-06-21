@@ -1,7 +1,5 @@
 ﻿using IWantApp.Domain.Users;
-using IWantApp.Endpoints.Clients;
 using IWantApp.Endpoints.Extensions;
-using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
 namespace IWantApp.Endpoints.Employees;
